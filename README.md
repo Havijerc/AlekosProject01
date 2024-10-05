@@ -1,5 +1,6 @@
 # Alekos Project - Leap Motion Control for DJI Tello Drone
 
+
 ## Project Description
 
 The **Alekos Project** is an innovative project that integrates Leap Motion (Ultraleap) hand-tracking technology with the DJI Tello drone. 
