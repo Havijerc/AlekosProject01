@@ -7,13 +7,19 @@ The Alekos Project focuses on integrating Leap Motion hand-tracking technology w
 ## Repository Structure
 Here’s an overview of the key files and directories in the repository:
 
-leap_motion.py: This is the main Python script that captures hand-tracking data from the Leap Motion sensor and sends the corresponding commands to the Tello drone.
-tello_control.py: This file manages communication with the Tello drone using its SDK.
-lib/: Contains the Leap Motion SDK files, including the necessary LeapC.dll file.
-x64/LeapC.dll: This is the dynamic link library that enables Python to communicate with the Leap Motion hardware.
-README.md: Provides the instructions and details about the project.
-requirements.txt: Lists the required Python packages to run the project.
-LICENSE: The project is licensed under the MIT License.
+- leap_motion.py: This is the main Python script that captures hand-tracking data from the Leap Motion sensor and sends the corresponding commands to the Tello drone.
+
+- tello_control.py: This file manages communication with the Tello drone using its SDK.
+
+- lib/: Contains the Leap Motion SDK files, including the necessary LeapC.dll file.
+
+- x64/LeapC.dll: This is the dynamic link library that enables Python to communicate with the Leap Motion hardware.
+
+- README.md: Provides the instructions and details about the project.
+
+- requirements.txt: Lists the required Python packages to run the project.
+
+- LICENSE: The project is licensed under the MIT License.
 
 ## Features
 Hand Gesture Recognition: The project detects hand movements like moving the palm up or down to control the altitude of the Tello drone.
