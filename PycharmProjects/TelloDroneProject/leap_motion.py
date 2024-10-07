@@ -1,18 +1,23 @@
-import ctypes
+import sys
 import os
+import ctypes
+from Leap import Controller, Listener  # Importamos las clases necesarias
 
-# Path to the LeapC.dll
+# Aseguramos que la ruta de los bindings esté incluida
+sys.path.append('C:/Users/havij/PycharmProjects/TelloDroneProject/leapc-python-bindings-main/leapc-python-api')
+
+# Ruta al archivo LeapC.dll
 leap_dll_path = 'C:/Users/havij/PycharmProjects/TelloDroneProject/lib/x64/LeapC.dll'
 leap_lib = ctypes.CDLL(leap_dll_path)
 
-# Check if LeapC.dll is loaded
+# Comprobamos si LeapC.dll está cargado
 if leap_lib:
     print("LeapC.dll loaded successfully.")
 else:
     print("Error loading LeapC.dll.")
 
 
-# Define the necessary tracking structures
+# Definición de las estructuras necesarias para el tracking
 class LEAP_VECTOR(ctypes.Structure):
     _fields_ = [("x", ctypes.c_float), ("y", ctypes.c_float), ("z", ctypes.c_float)]
 
@@ -28,38 +33,38 @@ class LEAP_TRACKING_EVENT(ctypes.Structure):
     _fields_ = [
         ('frame_id', ctypes.c_longlong),
         ('timestamp', ctypes.c_longlong),
-        ('hands', LEAP_HAND * 2),  # Assuming tracking up to 2 hands
+        ('hands', LEAP_HAND * 2),  # Asumiendo tracking para hasta 2 manos
         ('nHands', ctypes.c_uint32)
     ]
 
 
-# Function to obtain tracking data
-def get_tracking_data():
-    tracking_event = LEAP_TRACKING_EVENT()
-    result = leap_lib.LEAP_PollTracking(ctypes.byref(tracking_event))
+# Definir una clase Listener que hereda de Leap.Listener
+class SampleListener(Listener):
+    def on_connect(self, controller):
+        print("Connected to Leap Motion")
+        controller.enable_gesture(Controller.Gesture.TYPE_SWIPE)
 
-    if result == 0:  # 0 indicates success
-        print(f"Frame ID: {tracking_event.frame_id}, Timestamp: {tracking_event.timestamp}")
-        # Process hand data
-        for i in range(tracking_event.nHands):
-            hand = tracking_event.hands[i]
+    def on_frame(self, controller):
+        frame = controller.frame()
+        hands = frame.hands
+        for hand in hands:
             print(
                 f"Hand ID: {hand.id}, Palm Position: x={hand.palm_position.x}, y={hand.palm_position.y}, z={hand.palm_position.z}")
 
-            # Simple gesture recognition (palm up)
-            if hand.palm_position.y > 200:
-                print("Gesture Detected: Move Drone Up")
-            elif hand.palm_position.y < 100:
-                print("Gesture Detected: Move Drone Down")
-    else:
-        print("Error getting tracking data")
 
+# Función principal para iniciar el listener
+def main():
+    listener = SampleListener()
+    controller = Controller()
+    controller.add_listener(listener)
 
-# Function to simulate a continuous Listener
-def run_leap_motion_listener():
-    while True:
-        get_tracking_data()
+    try:
+        input("Press Enter to quit...\n")
+    except KeyboardInterrupt:
+        pass
+    finally:
+        controller.remove_listener(listener)
 
 
 if __name__ == "__main__":
-    run_leap_motion_listener()
+    main()
