@@ -55,10 +55,16 @@ The script will display the position of the palm in real-time for each frame.
 
 ## Troubleshooting
 
-LeapC.dll not found: Ensure that the LeapC.dll is in the correct directory and that the path is correct in the Python script.
-Drone not responding: Ensure the Tello drone is connected to the network and the Tello SDK is properly configured.
-Gesture detection issues: Make sure the Leap Motion sensor is correctly positioned and can detect your hand movements clearly.
-Future Work
+- **LeapC.dll not found:** Ensure that the `LeapC.dll` is in the correct directory and that the path is correct in the Python script.  
+  *(Resolved: We fixed this issue by verifying the correct placement of the `LeapC.dll` in the project directory and properly linking the file in the Python script.)*
+
+- **Drone not responding:** Ensure the Tello drone is connected to the network and that the Tello SDK is properly configured.
+
+- **Gesture detection issues:** Make sure the Leap Motion sensor is correctly positioned and can detect your hand movements clearly.
+
+- **New Issue - Error obtaining tracking data:**  
+   After establishing a successful connection with the Leap Motion API using `LeapCreateConnection`, the system fails to retrieve valid tracking data with the `LeapPollConnection` function. Although a message is received, the tracking event data (`LEAP_TRACKING_EVENT`) seems to be incomplete or not processed correctly, resulting in the following error:
+   
 
 ### This project is still in development, and future updates may include:
 
