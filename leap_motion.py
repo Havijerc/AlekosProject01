@@ -1,53 +1,56 @@
-from leapc_cffi import libleapc, ffi  # Importamos correctamente 'libleapc'
+from leapc_cffi import libleapc, ffi
 
-# Verifica que LeapC esté cargado
-if libleapc:
-    print("LeapC loaded successfully.")
-else:
-    print("Error loading LeapC.")
-
-
-# Función para obtener los datos de tracking
-def poll_tracking_data():
+def open_connection():
     # Crear el puntero a la conexión
     connection_ptr = ffi.new("LEAP_CONNECTION *")
 
-    # Llamar a LeapCreateConnection con NULL y el puntero a la conexión
+    # Llamar a LeapCreateConnection
     result = libleapc.LeapCreateConnection(ffi.NULL, connection_ptr)
+    if result != 0:
+        print("Error al crear la conexión.")
+        return None
 
-    if result == 0:
-        print("Connection created successfully.")
-    else:
-        print("Error creating connection.")
+    print("Conexión creada exitosamente.")
+
+    # Abrimos la conexión
+    result = libleapc.LeapOpenConnection(connection_ptr[0])
+    if result != 0:
+        print("Error al abrir la conexión.")
+        return None
+
+    print("Conexión abierta exitosamente.")
+    return connection_ptr[0]
+
+def poll_tracking_data(connection_ptr):
+    if not connection_ptr:
+        print("Puntero de conexión inválido.")
         return
 
-    # Proporcionar el tiempo de espera (en milisegundos)
-    timeout = 1000  # 1 segundo
-
-    # Crear un objeto para almacenar mensajes del servidor (conexión)
+    timeout = 1000  # Tiempo de espera de 1 segundo
     message = ffi.new("LEAP_CONNECTION_MESSAGE *")
 
-    # Llamar a LeapPollConnection para obtener datos de seguimiento
-    result = libleapc.LeapPollConnection(connection_ptr[0], timeout, message)
+    # Llamar a LeapPollConnection para recibir mensajes
+    result = libleapc.LeapPollConnection(connection_ptr, timeout, message)
 
     if result == 0:  # 0 indica éxito
-        print(f"Received a message of type: {message.type}")
+        print(f"Mensaje recibido de tipo: {message.type}")
         if message.type == libleapc.eLeapEventType_Tracking:
-            tracking_event = ffi.cast("LEAP_TRACKING_EVENT *", message.tracking_event)
+            print("Es un mensaje de tipo 'tracking'.")
+            tracking_event = ffi.cast("LEAP_TRACKING_EVENT *", message.event)
             print(f"Frame ID: {tracking_event.frame_id}, Timestamp: {tracking_event.timestamp}")
-            # Procesar los datos de las manos
-            for i in range(tracking_event.nHands):
-                hand = tracking_event.hands[i]
-                print(
-                    f"Hand ID: {hand.id}, Palm Position: x={hand.palm_position.x}, y={hand.palm_position.y}, z={hand.palm_position.z}")
+        else:
+            print(f"Mensaje recibido de tipo: {message.type} no es de tipo 'tracking'.")
     else:
         print("Error obteniendo los datos de tracking.")
 
-
-# Función principal
 def main():
-    poll_tracking_data()
-
+    connection = open_connection()
+    if connection:
+        poll_tracking_data(connection)
 
 if __name__ == "__main__":
     main()
+
+
+def get_tracking_data():
+    return None

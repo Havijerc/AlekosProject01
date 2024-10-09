@@ -3,6 +3,8 @@ connected we set the tracking mode to desktop and then generate logs for
 every tracking frame received. The events of creating a connection to the 
 server and a device being plugged in also generate logs. 
 """
+import sys
+sys.path.append("leapc-python-api/src")
 
 import leap
 import time
